@@ -1,0 +1,4 @@
+crontabentries:
+- name: "old cron"
+  cron_file: popularity-contest
+  state: absent
