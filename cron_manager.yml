@@ -1,0 +1,28 @@
+---
+- name: Enforce cron entries in variable files
+  hosts: all
+  become: true
+  become_user: root
+
+  tasks:
+  - name: "enforce crontab entries"
+    cron:
+      name: "{{ item.name }}"
+      minute: "{{ item.minute| default('') }}"
+      hour: "{{ item.hour| default('') }}"
+      job: "{{ item.job| default('') }}"
+      state: "{{ state | default('present') }}"
+    loop: "{{ crontabentries }}"
+    when:
+    - crontabentries is defined
+    - item.state|default('present')  != 'absent'
+
+  - name: enforce absence of entries
+    cron:
+      name: "{{ item.name }}"
+      cron_file: "{{ item.cron_file }}"
+      state: absent
+    loop: "{{ crontabentries }}"
+    when:
+    - crontabentries is defined
+    - item.state|default('present')  == 'absent'
